@@ -283,6 +283,7 @@ update();
  function applyMapVisibility(){
   const sets=window.__astralGeoEntities||{};
   (sets.cities||[]).forEach(e=>e.show=mapVisibility.cities);
+  (sets.allCities||[]).forEach(e=>e.show=mapVisibility.cities);
   (sets.continents||[]).forEach(e=>e.show=mapVisibility.continents);
   (sets.countryLabels||[]).forEach(e=>e.show=mapVisibility.countries);
   if(borderData)borderData.show=mapVisibility.borders;
@@ -311,6 +312,36 @@ update();
    el('earthSearchStatus').textContent='Globe labels loaded: countries, cities, capitals and continents.';
   }catch(err){el('earthSearchStatus').textContent='Country borders and names could not load; city and continent labels remain available.';console.error(err)}
  }
+ async function loadAllCities(){
+  try{
+   el('earthSearchStatus').textContent='Loading the global cities database…';
+   const response=await fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places.geojson');
+   if(!response.ok)throw new Error('Global city database unavailable');
+   const geo=await response.json();
+   const existing=placeData.map(p=>[p[2],p[3]]);
+   const cityEntities=[];
+   geo.features.forEach(feature=>{
+    const p=feature.properties||{};
+    const name=p.NAME||p.NAMEASCII;
+    const lon=Number(p.LONGITUDE),lat=Number(p.LATITUDE);
+    if(!name||!Number.isFinite(lon)||!Number.isFinite(lat)||Math.abs(lat)>90||Math.abs(lon)>180)return;
+    if(existing.some(([x,y])=>Math.abs(x-lon)<.18&&Math.abs(y-lat)<.18))return;
+    const rank=Number(p.LABELRANK??p.SCALERANK??8);
+    const isCapital=Number(p.ADM0CAP)===1||String(p.FEATURECLA||'').toLowerCase().includes('capital');
+    cityEntities.push(viewer.entities.add({
+     position:Cesium.Cartesian3.fromDegrees(lon,lat),
+     point:{pixelSize:isCapital?5:3,color:isCapital?Cesium.Color.fromCssColorString('#ff83d0'):Cesium.Color.fromCssColorString('#72e5ed'),outlineColor:Cesium.Color.fromCssColorString('#11152d'),outlineWidth:1},
+     label:{text:name+(isCapital?' ★':''),font:isCapital?'11px sans-serif':'10px sans-serif',fillColor:isCapital?Cesium.Color.fromCssColorString('#ffd5ef'):Cesium.Color.WHITE,outlineColor:Cesium.Color.fromCssColorString('#11152d'),outlineWidth:3,style:Cesium.LabelStyle.FILL_AND_OUTLINE,verticalOrigin:Cesium.VerticalOrigin.BOTTOM,pixelOffset:new Cesium.Cartesian2(0,-7),distanceDisplayCondition:new Cesium.DistanceDisplayCondition(0,rank<=2?9000000:rank<=5?4200000:1600000)}
+    }));
+   });
+   window.__astralGeoEntities.allCities=cityEntities;
+   applyMapVisibility();
+   el('earthSearchStatus').textContent='Loaded '+cityEntities.length.toLocaleString()+' additional populated places worldwide, plus featured capitals and cities. Zoom in to reveal more labels.';
+  }catch(err){
+   el('earthSearchStatus').textContent='The global cities database could not load. Featured cities and capitals remain available.';
+   console.error('Astral global cities:',err);
+  }
+ }
  function coordsText(lat,lon,name){
   const ns=lat>=0?'N':'S',ew=lon>=0?'E':'W';
   el('earthReadout').innerHTML=Math.abs(lat).toFixed(4)+'° '+ns+'<br>'+Math.abs(lon).toFixed(4)+'° '+ew+(name?'<br>'+name.toUpperCase():'');
@@ -332,7 +363,7 @@ update();
    window.addEventListener('resize',()=>{viewer.resize();viewer.scene.requestRender()});
    requestAnimationFrame(()=>{viewer.resize();viewer.scene.requestRender()});
   setLayer('true');
-  addGeoLabels();loadCountryData();
+  addGeoLabels();loadCountryData();loadAllCities();
   viewer.screenSpaceEventHandler.setInputAction(function(movement){
    const cart=viewer.camera.pickEllipsoid(movement.position,viewer.scene.globe.ellipsoid);
    if(!cart)return;const c=Cesium.Cartographic.fromCartesian(cart),lat=Cesium.Math.toDegrees(c.latitude),lon=Cesium.Math.toDegrees(c.longitude);
