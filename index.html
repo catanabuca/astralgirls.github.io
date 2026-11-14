@@ -16,7 +16,7 @@
 .earth-toolbar strong{font-size:13px;letter-spacing:.02em}.earth-toolbar small{display:block;color:#9ba2c4;font:10px 'DM Mono';margin-top:5px}
 .earth-actions{display:flex;gap:8px;flex-wrap:wrap}.earth-actions button,.earth-search button,.earth-coords button{background:#202344;color:#e8e7ff;border:1px solid #45466e;border-radius:9px;padding:9px 12px;font-size:11px;cursor:pointer}
 .earth-actions button.active,.earth-actions button:hover,.earth-search button:hover,.earth-coords button:hover{border-color:var(--pink);background:#35264b}
-.earth-body{display:grid;grid-template-columns:minmax(0,1fr) 245px;min-height:480px}.earth-map{position:relative;min-width:0;min-height:480px;background:#080d20}.earth-map #earthGlobe{position:absolute;inset:0;width:100%;height:100%}
+.earth-body{display:grid;grid-template-columns:minmax(0,1fr) 245px;min-height:680px}.earth-map{position:relative;min-width:0;min-height:680px;background:#080d20}.earth-map #earthGlobe{position:absolute;inset:0;width:100%;height:100%}
 .earth-side{padding:17px;background:#11152d;border-left:1px solid #303354;display:flex;flex-direction:column;gap:15px}.earth-side h3{font-size:12px;margin:0 0 9px;color:#f4f0ff}.earth-side p{font-size:10px;line-height:1.65;color:#9da3c4;margin:0}
 .earth-search,.earth-coords{display:flex;gap:6px}.earth-search input,.earth-coords input,.earth-side input[type=date]{min-width:0;width:100%;background:#090e22;color:#eeeaff;border:1px solid #34395f;border-radius:8px;padding:9px;font:11px 'DM Mono'}
 .earth-coords input{width:50%}.earth-side input[type=date]{color-scheme:dark}
@@ -26,8 +26,8 @@
 .earth-credit{padding:10px 14px;border-top:1px solid #292e50;color:#8991b6;font:9px 'DM Mono';display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.earth-credit a{color:var(--cyan)}
 .earth-hint{position:absolute;left:14px;bottom:14px;padding:8px 10px;background:#090d20dd;border:1px solid #41436b;border-radius:8px;color:#c7c7e4;font:9px 'DM Mono';pointer-events:none;z-index:2}
 .cesium-viewer-bottom{display:none!important}.cesium-widget-credits{display:none!important}
-@media(max-width:760px){.earth-body{grid-template-columns:1fr}.earth-map{min-height:390px}.earth-side{border-left:0;border-top:1px solid #303354;display:grid;grid-template-columns:1fr 1fr}.earth-side>div:last-child{grid-column:1/-1}}
-@media(max-width:430px){.earth-side{grid-template-columns:1fr}.earth-side>div:last-child{grid-column:auto}.earth-map{min-height:340px}}
+@media(max-width:760px){.earth-body{grid-template-columns:1fr}.earth-map{min-height:520px}.earth-side{border-left:0;border-top:1px solid #303354;display:grid;grid-template-columns:1fr 1fr}.earth-side>div:last-child{grid-column:1/-1}}
+@media(max-width:430px){.earth-side{grid-template-columns:1fr}.earth-side>div:last-child{grid-column:auto}.earth-map{min-height:430px}}
 
 </style>
 </head>
@@ -327,7 +327,7 @@ update();
   viewer.scene.globe.enableLighting=true;
   viewer.scene.globe.showGroundAtmosphere=true;
   viewer.scene.backgroundColor=Cesium.Color.fromCssColorString('#080d20');
-  viewer.camera.setView({destination:Cesium.Cartesian3.fromDegrees(12,18,24500000)});
+  viewer.camera.setView({destination:Cesium.Cartesian3.fromDegrees(12,18,20500000)});
   setLayer('true');
   addGeoLabels();loadCountryData();
   viewer.screenSpaceEventHandler.setInputAction(function(movement){
