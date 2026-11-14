@@ -327,7 +327,10 @@ update();
   viewer.scene.globe.enableLighting=true;
   viewer.scene.globe.showGroundAtmosphere=true;
   viewer.scene.backgroundColor=Cesium.Color.fromCssColorString('#080d20');
-  viewer.resize();\n   viewer.camera.setView({destination:Cesium.Cartesian3.fromDegrees(12,18,11500000)});\n   window.addEventListener('resize',()=>{viewer.resize();viewer.scene.requestRender()});\n   requestAnimationFrame(()=>{viewer.resize();viewer.scene.requestRender()});
+  viewer.resize();
+   viewer.camera.setView({destination:Cesium.Cartesian3.fromDegrees(12,18,11500000)});
+   window.addEventListener('resize',()=>{viewer.resize();viewer.scene.requestRender()});
+   requestAnimationFrame(()=>{viewer.resize();viewer.scene.requestRender()});
   setLayer('true');
   addGeoLabels();loadCountryData();
   viewer.screenSpaceEventHandler.setInputAction(function(movement){
